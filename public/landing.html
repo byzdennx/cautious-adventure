@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KuroNeko | Brutal Dashboard</title>
+    <link id="favicon" rel="icon" href="">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        mono: ['"Space Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif']
+                    },
+                    colors: {
+                        'nb-black': '#1A1A1A',
+                        'nb-white': '#FFFFFF',
+                        'nb-yellow': '#FFE600',
+                        'nb-pink': '#FF0055',
+                        'nb-blue': '#00D2FF',
+                        'nb-purple': '#9D00FF',
+                        'nb-red': '#FF3B30',
+                        'nb-green': '#00E676',
+                        'nb-gray': '#F5F5F5',
+                        'nb-darkgray': '#2A2A2A',
+                    },
+                    boxShadow: { 
+                        'brutal': '8px 8px 0px 0px #1A1A1A',
+                        'brutal-sm': '4px 4px 0px 0px #1A1A1A',
+                        'brutal-hover': '12px 12px 0px 0px #1A1A1A',
+                        'brutal-pink': '8px 8px 0px 0px #FF0055',
+                        'brutal-blue': '8px 8px 0px 0px #00D2FF',
+                        'brutal-yellow': '8px 8px 0px 0px #FFE600',
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'brutal-pop': 'brutalPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'fade-up': 'fadeUp 0.4s ease-out forwards',
+                        'spin-slow': 'spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        brutalPop: { '0%': { transform: 'scale(0.95)' }, '100%': { transform: 'scale(1)' } },
+                        fadeUp: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #F5F5F5;
+            background-image: repeating-linear-gradient(45deg, #E0E0E0 0px, #E0E0E0 1px, transparent 1px, transparent 24px);
+        }
+        
+        /* Neo-Brutalism Core Elements */
+        .brutal-border {
+            border: 3px solid #1A1A1A;
+        }
+        
+        .brutal-card {
+            border: 3px solid #1A1A1A;
+            background: #FFFFFF;
+            box-shadow: 8px 8px 0px 0px #1A1A1A;
+            transition: all 0.15s ease;
+        }
+        
+        .brutal-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0px 0px #1A1A1A;
+        }
+        
+        /* Brutal Button Styles */
+        .brutal-button {
+            background: #FFE600;
+            border: 3px solid #1A1A1A;
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+            transition: all 0.1s ease;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        
+        .brutal-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #1A1A1A;
+        }
+        
+        .brutal-button-outline {
+            background: #FFFFFF;
+            border: 3px solid #1A1A1A;
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+            transition: all 0.1s ease;
+            font-weight: 800;
+        }
+        
+        .brutal-button-outline:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #1A1A1A;
+        }
+        
+        .brutal-button-pink {
+            background: #FF0055;
+            border: 3px solid #1A1A1A;
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+            color: white;
+        }
+        
+        .brutal-button-pink:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #1A1A1A;
+        }
+        
+        .brutal-tag {
+            background: #00D2FF;
+            color: #1A1A1A;
+            border: 2px solid #1A1A1A;
+            font-weight: 800;
+            font-size: 10px;
+        }
+        
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #F5F5F5; border-left: 2px solid #1A1A1A; }
+        ::-webkit-scrollbar-thumb { background: #1A1A1A; border: 2px solid #F5F5F5; }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #E0E0E0 0%, #F5F5F5 50%, #E0E0E0 100%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        
+        /* Brutal Floating Blobs - simplified for neo-brutalism */
+        .brutal-blob {
+            position: fixed;
+            border: 3px solid #1A1A1A;
+            filter: blur(0px);
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center font-sans p-4 selection:bg-nb-pink selection:text-white relative overflow-hidden">
+    
+    <!-- Brutalist Background Elements -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-20 left-10 w-64 h-64 bg-nb-yellow rounded-full brutal-border brutal-blob" style="opacity: 0.1;"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-nb-pink rounded-full brutal-border brutal-blob" style="opacity: 0.08;"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-nb-blue rounded-full brutal-border brutal-blob" style="opacity: 0.05;"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-[480px]">
+        
+        <div class="brutal-card rounded-none overflow-hidden transition-all duration-300 bg-nb-white">
+            
+            <!-- Brutal Window Header -->
+            <div class="bg-nb-white border-b-3 border-nb-black px-5 py-4 flex justify-between items-center select-none">
+                <div class="flex gap-3">
+                    <div class="w-4 h-4 bg-nb-red brutal-border"></div>
+                    <div class="w-4 h-4 bg-nb-yellow brutal-border"></div>
+                    <div class="w-4 h-4 bg-nb-green brutal-border"></div>
+                </div>
+                <div class="flex items-center gap-2 px-3 py-1 bg-nb-black">
+                    <div class="w-2 h-2 bg-nb-green animate-blink"></div>
+                    <span class="text-[10px] font-mono font-black text-nb-white uppercase tracking-wider">BRUTAL MODE // ONLINE</span>
+                </div>
+                <div class="w-8"></div>
+            </div>
+
+            <div class="p-6 relative">
+                
+                <!-- LOADER BRUTAL -->
+                <div id="loader" class="flex flex-col gap-5">
+                    <div class="w-full aspect-[16/9] brutal-border bg-nb-gray shimmer"></div>
+                    <div class="space-y-3 mt-2">
+                        <div class="h-8 w-2/3 shimmer brutal-border"></div>
+                        <div class="h-4 w-full shimmer brutal-border"></div>
+                        <div class="h-4 w-5/6 shimmer brutal-border"></div>
+                    </div>
+                    <div class="flex gap-3 mt-2">
+                        <div class="h-14 w-1/2 shimmer brutal-border"></div>
+                        <div class="h-14 w-1/2 shimmer brutal-border"></div>
+                    </div>
+                </div>
+
+                <!-- MAIN CONTENT BRUTAL -->
+                <div id="content" class="hidden animate-brutal-pop">
+                    
+                    <!-- THUMBNAIL BRUTAL -->
+                    <div class="relative w-full aspect-[16/9] brutal-border overflow-hidden group mb-6 bg-nb-gray">
+                        <div class="absolute inset-0 bg-nb-pink/10 z-10 group-hover:bg-transparent transition-all duration-300"></div>
+                        <img src="https://i.pinimg.com/1200x/22/ad/33/22ad33de3df111936526f2a2acdc879f.jpg" alt="Cover" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        
+                        <div class="absolute bottom-3 left-3 z-20">
+                            <span class="bg-nb-yellow brutal-border px-3 py-1.5 text-[10px] font-black uppercase tracking-wider flex items-center gap-2 shadow-brutal-sm">
+                                <i class="fa-solid fa-bolt text-nb-black"></i> v2.2.0
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- TITLE & DESC -->
+                    <div class="mb-6 text-center animate-fade-up">
+                        <h1 id="dash-title" class="text-4xl font-black tracking-tighter uppercase text-nb-black mb-3">EPAND<span class="text-nb-pink">LABS</span></h1>
+                        <div class="flex justify-center mb-4">
+                            <div class="h-1 w-16 bg-nb-black"></div>
+                        </div>
+                        <p id="dash-desc" class="text-sm font-mono font-bold text-nb-black/70 leading-relaxed px-2 uppercase tracking-wide"></p>
+                    </div>
+
+                    <!-- ACTION BUTTONS - BRUTAL -->
+                    <div class="grid grid-cols-2 gap-4 mb-5 animate-fade-up" style="animation-delay: 0.1s">
+                        
+                        <a href="/docs" class="brutal-button flex items-center justify-center h-14 text-sm gap-2">
+                            <i class="fa-solid fa-book-skull text-lg"></i>
+                            <span class="font-black tracking-wider">DOCS</span>
+                        </a>
+                        
+                        <a href="/stats" class="brutal-button-outline flex items-center justify-center h-14 text-sm gap-2">
+                            <i class="fa-solid fa-chart-simple text-lg text-nb-pink"></i>
+                            <span class="font-black tracking-wider">STATS</span>
+                        </a>
+                    </div>
+
+                    <!-- SOCIAL BUTTONS - BRUTAL VARIANTS -->
+                    <div class="flex gap-3 justify-center animate-fade-up h-14" style="animation-delay: 0.2s">
+                        <a id="btn-channel" href="#" target="_blank" class="flex-1 brutal-button-outline flex items-center justify-center gap-2 hover:bg-nb-green hover:border-nb-black transition-colors">
+                            <i class="fa-brands fa-whatsapp text-xl text-nb-green"></i>
+                            <span class="font-black text-xs uppercase tracking-wider hidden sm:inline">WA</span>
+                        </a>
+
+                        <button onclick="share()" class="flex-1 brutal-button-pink flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-share-nodes text-lg"></i>
+                            <span class="font-black text-xs uppercase tracking-wider hidden sm:inline">SHARE</span>
+                        </button>
+                    </div>
+                    
+                    <!-- FOOTER -->
+                    <div class="mt-8 pt-5 border-t-3 border-nb-black text-center animate-fade-up" style="animation-delay: 0.3s">
+                        <p class="text-[10px] font-mono font-black text-nb-black/60 uppercase tracking-wider">
+                            POWERED BY <span class="text-nb-pink">EPAND</span> • 2026 • BRUTALISM
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const minLoadTime = 800; 
+        const startLoad = Date.now();
+
+        function share() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.title,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                // Brutal toast feedback
+                showBrutalToast("LINK COPIED!");
+            }
+        }
+
+        function showBrutalToast(msg) {
+            // Create brutal toast element
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-8 left-1/2 -translate-x-1/2 z-[200] bg-nb-yellow brutal-border px-6 py-3 font-black text-sm uppercase flex items-center gap-3 shadow-brutal animate-brutal-pop';
+            toast.innerHTML = `<div class="w-7 h-7 bg-nb-black text-nb-white flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div><span>${msg}</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        fetch('/config')
+            .then(res => res.json())
+            .then(config => {
+                const titleEl = document.getElementById('dash-title');
+                const descEl = document.getElementById('dash-desc');
+                
+                // Apply brutal styling to title
+                const apiName = config.settings.apiName || "EpanDLabs";
+                if(apiName.includes("EpanDLabs")) {
+                    titleEl.innerHTML = `EPAND<span class="text-nb-pink">LABS</span>`;
+                } else {
+                    titleEl.innerText = apiName;
+                }
+                
+                descEl.innerText = config.settings.description || "BRUTAL API DOCUMENTATION";
+                
+                const btnChannel = document.getElementById('btn-channel');
+                if(config.settings.channelUrl) btnChannel.href = config.settings.channelUrl;
+                else btnChannel.style.display = 'none';
+
+                const btnSource = document.getElementById('btn-source');
+                if(config.settings.github) btnSource.href = config.settings.github;
+                else btnSource.style.display = 'none';
+
+                const thumbEl = document.getElementById('dash-thumb');
+                thumbEl.src = config.settings.thumbnail || 'https://placehold.co/800x450/FFE600/1A1A1A?text=BRUTAL+API';
+                thumbEl.onerror = () => { thumbEl.src = 'https://placehold.co/800x450/FF0055/FFFFFF?text=EPAND+LABS'; };
+
+                if(config.settings.favicon) document.getElementById('favicon').href = config.settings.favicon;
+
+                const elapsed = Date.now() - startLoad;
+                const remaining = Math.max(0, minLoadTime - elapsed);
+
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                    const content = document.getElementById('content');
+                    content.classList.remove('hidden');
+                    content.classList.add('animate-brutal-pop');
+                }, remaining);
+            })
+            .catch(err => {
+                console.error(err);
+                // Fallback brutal mode
+                document.getElementById('dash-title').innerHTML = `EPAND<span class="text-nb-pink">LABS</span>`;
+                document.getElementById('dash-desc').innerText = "BRUTAL DASHBOARD TEMPLATE // READY";
+                
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('hidden');
+                    document.getElementById('content').classList.remove('hidden');
+                    document.getElementById('content').classList.add('animate-brutal-pop');
+                }, 1000);
+            });
+    </script>
+</body>
+</html>

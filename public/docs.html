@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KuroNeko | Neo-Brutalist Docs</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Space Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        'nb-black': '#1A1A1A',
+                        'nb-white': '#FFFFFF',
+                        'nb-yellow': '#FFE600',
+                        'nb-pink': '#FF0055',
+                        'nb-blue': '#00D2FF',
+                        'nb-purple': '#9D00FF',
+                        'nb-red': '#FF3B30',
+                        'nb-green': '#00E676',
+                        'nb-gray': '#F5F5F5',
+                    },
+                    boxShadow: {
+                        'brutal': '8px 8px 0px 0px #1A1A1A',
+                        'brutal-sm': '4px 4px 0px 0px #1A1A1A',
+                        'brutal-hover': '12px 12px 0px 0px #1A1A1A',
+                        'brutal-pink': '8px 8px 0px 0px #FF0055',
+                        'brutal-blue': '8px 8px 0px 0px #00D2FF',
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'slide-down': 'slideDown 0.2s ease-out forwards',
+                        'marquee': 'marquee 20s linear infinite',
+                        'brutal-pop': 'brutalPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'shake': 'shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both',
+                    },
+                    keyframes: {
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-8px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        marquee: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } },
+                        brutalPop: { '0%': { transform: 'scale(0.95)' }, '100%': { transform: 'scale(1)' } },
+                        shake: { '10%, 90%': { transform: 'translateX(-1px)' }, '20%, 80%': { transform: 'translateX(2px)' }, '30%, 50%, 70%': { transform: 'translateX(-4px)' }, '40%, 60%': { transform: 'translateX(4px)' } },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #F5F5F5;
+            background-image: repeating-linear-gradient(45deg, #E0E0E0 0px, #E0E0E0 1px, transparent 1px, transparent 24px);
+        }
+        
+        /* Neo-Brutalism Core Elements */
+        .brutal-border {
+            border: 3px solid #1A1A1A;
+        }
+        
+        .brutal-card {
+            border: 3px solid #1A1A1A;
+            background: #FFFFFF;
+            box-shadow: 8px 8px 0px 0px #1A1A1A;
+            transition: all 0.15s ease;
+        }
+        
+        .brutal-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0px 0px #1A1A1A;
+        }
+        
+        .brutal-button {
+            background: #FFE600;
+            border: 3px solid #1A1A1A;
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+            transition: all 0.1s ease;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        
+        .brutal-button:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px 0px #1A1A1A;
+        }
+        
+        .brutal-input {
+            border: 3px solid #1A1A1A;
+            background: #FFFFFF;
+            transition: all 0.1s ease;
+        }
+        
+        .brutal-input:focus {
+            outline: none;
+            transform: translate(-2px, -2px);
+            box-shadow: 4px 4px 0px 0px #1A1A1A;
+        }
+        
+        .category-btn {
+            background: #FFFFFF;
+            border: 3px solid #1A1A1A;
+            box-shadow: 6px 6px 0px 0px #1A1A1A;
+            transition: all 0.1s ease;
+            font-weight: 800;
+        }
+        
+        .category-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px 0px #1A1A1A;
+        }
+        
+        .terminal-window {
+            background: #1A1A1A;
+            border: 3px solid #1A1A1A;
+            box-shadow: 8px 8px 0px 0px #FF0055;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border: 2px solid #1A1A1A;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .status-success {
+            background-color: #00E676;
+        }
+        
+        .status-error {
+            background-color: #FF3B30;
+        }
+        
+        .status-waiting {
+            background-color: #FFE600;
+            animation: blink 1s infinite;
+        }
+        
+        .response-area {
+            border: 3px solid #1A1A1A;
+            background: #1A1A1A;
+            transition: all 0.2s ease;
+        }
+        
+        .json-key { color: #FF0055; font-weight: bold; }
+        .json-string { color: #00E676; }
+        .json-number { color: #00D2FF; font-weight: bold; }
+        .json-boolean { color: #FFE600; font-style: italic; }
+        .json-null { color: #888; }
+        
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #F5F5F5; border-left: 2px solid #1A1A1A; }
+        ::-webkit-scrollbar-thumb { background: #1A1A1A; border: 2px solid #F5F5F5; }
+        
+        .method-badge {
+            border: 2px solid #1A1A1A;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        .brutal-tag {
+            background: #00D2FF;
+            color: #1A1A1A;
+            border: 2px solid #1A1A1A;
+            font-weight: 800;
+            font-size: 10px;
+        }
+        
+        @keyframes outlineSpin {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .category-btn.animating {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .category-btn.animating::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: repeating-linear-gradient(0deg, #FFE600, #FF0055, #00D2FF, #FFE600);
+            z-index: -2; animation: outlineSpin 0.6s linear infinite;
+        }
+        
+        .category-btn.animating::after {
+            content: ''; position: absolute; inset: 3px; background: white; z-index: -1;
+        }
+    </style>
+</head>
+<body class="text-nb-black font-sans min-h-screen flex flex-col">
+    
+    <!-- BRUTALIST HEADER -->
+    <header class="border-b-4 border-nb-black bg-nb-white sticky top-0 z-[60] w-full">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center gap-4 justify-between">
+            <div class="flex items-center gap-4 shrink-0">
+                <a href="/" class="w-12 h-12 bg-nb-yellow brutal-border flex items-center justify-center hover:bg-nb-pink hover:text-white transition-colors duration-100">
+                    <i class="fa-solid fa-arrow-left text-2xl"></i>
+                </a>
+                <div class="border-l-4 border-nb-black pl-4">
+                    <h1 class="font-black text-3xl tracking-tighter uppercase">EPAND<span class="text-nb-pink">LABS</span></h1>
+                    <span class="text-[10px] font-black bg-nb-black text-nb-white px-2 py-0.5 tracking-wider">EPAND // BRUTAL MODE</span>
+                </div>
+            </div>
+
+            <div class="hidden md:block flex-1 max-w-md mx-4">
+                <div class="bg-nb-black border-3 border-nb-black overflow-hidden">
+                    <div id="running-text" class="text-nb-yellow font-mono font-bold text-xs uppercase tracking-wider px-4 py-2 whitespace-nowrap animate-marquee inline-block">
+                        ❯❯ SYSTEM ONLINE // WAITING FOR CONFIG // BRUTALISM ACTIVATED // ❮❮
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-10 grid lg:grid-cols-12 gap-8 items-start relative z-10">
+        
+        <!-- SIDEBAR BRUTAL -->
+        <aside class="lg:col-span-4 lg:sticky lg:top-24 flex flex-col gap-8 h-fit z-40 w-full">
+            
+            <!-- TERMINAL BRUTAL -->
+            <div class="terminal-window flex flex-col h-[460px] relative overflow-hidden">
+                <div class="bg-nb-black px-4 py-3 flex items-center gap-3 border-b-3 border-nb-black">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 bg-nb-red brutal-border"></div>
+                        <div class="w-3 h-3 bg-nb-yellow brutal-border"></div>
+                        <div class="w-3 h-3 bg-nb-green brutal-border"></div>
+                    </div>
+                    <span class="text-[11px] font-mono font-bold text-nb-white uppercase tracking-wider ml-2">root@epndlbs:~/api</span>
+                    <span class="text-[11px] font-mono text-nb-gray ml-auto">80x24</span>
+                </div>
+                
+                <div id="term-logs" class="p-4 text-nb-gray font-mono text-xs overflow-y-auto flex-1 custom-scrollbar space-y-1 leading-relaxed bg-nb-black"></div>
+                
+                <div id="term-input-line" class="hidden px-4 py-2 border-t-3 border-nb-black bg-nb-black">
+                    <span class="text-nb-green font-bold mr-2">❯❯</span>
+                    <span class="text-nb-white font-mono">root@epndlbs $</span>
+                    <span class="inline-block w-2 h-3 bg-nb-yellow ml-1 animate-blink"></span>
+                </div>
+            </div>
+
+            <!-- SEARCH BRUTAL -->
+            <div class="relative">
+                <input type="text" id="search-input" placeholder="SEARCH ENDPOINT..." 
+                    class="w-full h-14 brutal-input px-5 pl-14 font-bold text-sm text-nb-black uppercase tracking-wider bg-nb-white">
+                <i class="fa-solid fa-magnifying-glass absolute left-5 top-5 text-2xl text-nb-black"></i>
+            </div>
+
+            <!-- STATS BRUTAL -->
+            <div class="brutal-card p-5 bg-nb-white">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center border-b-3 border-nb-black pb-3">
+                        <span class="font-black uppercase text-sm">TIME (WIB)</span>
+                        <span id="server-time" class="font-mono font-bold text-lg tracking-wider">--:--:--</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b-3 border-nb-black pb-3">
+                        <span class="font-black uppercase text-sm">DATE</span>
+                        <span id="server-date" class="font-mono font-bold">--/--/----</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-black uppercase text-sm">VISITOR</span>
+                        <span id="stat-visitors" class="text-nb-pink font-black text-2xl tracking-tighter">0</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <section class="lg:col-span-8 min-h-[50vh] w-full">
+            <div id="api-container" class="space-y-6 w-full"></div>
+            <div id="no-results" class="hidden flex-col items-center justify-center py-20 text-center brutal-card p-10">
+                <i class="fa-solid fa-skull text-6xl mb-4 text-nb-black"></i>
+                <p class="font-black text-2xl uppercase tracking-wider">NO DATA FOUND</p>
+                <p class="font-mono text-sm mt-2">404 - Brutal Not Found</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- TOAST BRUTAL -->
+    <div id="custom-toast" class="fixed bottom-8 right-8 z-[100] transform translate-y-32 opacity-0 transition-all duration-300">
+        <div class="bg-nb-yellow brutal-border px-6 py-3 font-black text-sm uppercase flex items-center gap-3 shadow-brutal">
+            <div class="w-7 h-7 bg-nb-black text-nb-white flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div>
+            <span id="toast-message">SUCCESS</span>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', init);
+        let globalConfig = null;
+        let toastTimeout;
+
+        function isMobileDevice() { return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent); }
+
+        async function init() {
+            if (isMobileDevice()) document.body.classList.add('is-mobile');
+            if (document.getElementById('term-logs')) {
+                try {
+                    const response = await fetch('/config');
+                    globalConfig = await response.json();
+                    setUi(globalConfig);
+                    loadEnd(globalConfig.tags);
+                    startWIBClock();
+                    await kuroneko(globalConfig);
+                    loadReminder();
+                    setSearch();
+                } catch (e) {
+                    document.getElementById('term-logs').innerHTML = `<span class="text-nb-red font-black">✖ SYSTEM FAILURE</span><br>${e.message}`;
+                }
+            }
+        }
+
+        function messeg(msg) {
+            const toast = document.getElementById('custom-toast');
+            const msgBox = document.getElementById('toast-message');
+            if(!toast || !msgBox) return;
+            msgBox.innerText = msg;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            toast.classList.add('animate-brutal-pop');
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => { 
+                toast.classList.add('translate-y-32', 'opacity-0');
+                toast.classList.remove('animate-brutal-pop');
+            }, 2500);
+        }
+
+        function startWIBClock() {
+            const timeEl = document.getElementById('server-time');
+            const dateEl = document.getElementById('server-date');
+            updateTime(); setInterval(updateTime, 1000);
+            function updateTime() {
+                const now = new Date();
+                if(timeEl) timeEl.innerText = now.toLocaleTimeString('id-ID', {timeZone: 'Asia/Jakarta', hour12: false});
+                if(dateEl) dateEl.innerText = now.toLocaleDateString('id-ID', {timeZone: 'Asia/Jakarta', day: 'numeric', month: 'short', year: 'numeric'});
+            }
+        }
+
+        async function loadReminder() {
+            try {
+                const req = await fetch('../src/reminder.json');
+                const data = await req.json();
+                if(data?.message) {
+                    const runningText = document.getElementById('running-text');
+                    runningText.innerText = `❯❯ ${data.message.toUpperCase()} ❮❮`;
+                }
+            } catch (e) {}
+        }
+
+        function terminalLog(message, type = 'info') {
+            const logs = document.getElementById('term-logs');
+            if(!logs) return;
+            const line = document.createElement('div');
+            let prefix = "➜";
+            let color = "text-nb-gray";
+            if(type === 'error') { color = "text-nb-red"; prefix = "✖"; }
+            else if(type === 'success') { color = "text-nb-green"; prefix = "✔"; }
+            else if(type === 'warn') { color = "text-nb-yellow"; prefix = "⚠"; }
+            else if(type === 'cmd') { color = "text-nb-white font-black"; prefix = "❯"; }
+            else if(type === 'system') { color = "text-nb-blue"; prefix = "#"; }
+            line.className = `${color} break-all font-mono text-xs`;
+            line.innerHTML = `<span class="opacity-50 mr-2">${prefix}</span> ${message}`;
+            logs.appendChild(line);
+            logs.scrollTop = logs.scrollHeight;
+        }
+
+        async function kuroneko(config) {
+            const logs = document.getElementById('term-logs');
+            if(!logs) return;
+            
+            const cmdLine = document.createElement('div');
+            cmdLine.className = 'text-nb-gray font-mono text-xs';
+            cmdLine.innerHTML = '<span class="text-nb-green font-black">❯❯</span> <span class="text-nb-white">root@danzz:~/kuroneko$</span> ';
+            const typeSpan = document.createElement('span');
+            typeSpan.className = 'text-nb-yellow font-black';
+            cmdLine.appendChild(typeSpan);
+            logs.appendChild(cmdLine);
+
+            const commandText = "npm run brutal --dev";
+            for(let i=0; i < commandText.length; i++) {
+                typeSpan.textContent += commandText.charAt(i);
+                await new Promise(r => setTimeout(r, 60));
+            }
+            await new Promise(r => setTimeout(r, 500));
+
+            terminalLog(`kuroneko-api@brutal-1.0.0 dev`, 'system');
+            terminalLog(`> ts-node src/index.ts --brutalism`, 'system');
+            await new Promise(r => setTimeout(r, 600));
+            terminalLog(``, 'system'); 
+            terminalLog(`[INIT] Starting Brutal Server...`, 'info');
+            await new Promise(r => setTimeout(r, 300));
+            terminalLog(`[ENV] PRODUCTION // BRUTAL MODE`, 'warn');
+            terminalLog(`[DB] MongoDB Atlas // CONNECTION ESTABLISHED`, 'success');
+            await new Promise(r => setTimeout(r, 400));
+
+            const allRoutes = [];
+            for (const cat in config.tags) {
+                config.tags[cat].forEach(r => allRoutes.push({cat, ...r}));
+            }
+            for(const route of allRoutes) {
+                terminalLog(`[REG] ${route.method} ${route.endpoint}`, 'info');
+                await new Promise(r => setTimeout(r, 15)); 
+            }
+            await new Promise(r => setTimeout(r, 400));
+            terminalLog(``, 'system');
+            terminalLog(`[✓] SERVER RUNNING @ https://api.danzy.web.id`, 'success');
+            terminalLog(`[WATCH] BRUTALISM WATCH ACTIVE`, 'warn');
+            
+            const container = document.getElementById('api-container');
+            if(container) {
+                container.classList.add('animate-brutal-pop');
+            }
+            document.getElementById('term-input-line')?.classList.remove('hidden');
+        }
+
+        function setUi(config) {
+            const s = config.settings;
+            if(document.getElementById('nav-title')) {
+                document.getElementById('nav-title').innerHTML = `KURO<span class="text-nb-pink">NEKO</span>`;
+            }
+            if(document.getElementById('stat-visitors')) {
+                const visitors = parseInt(s.visitors) || 1;
+                document.getElementById('stat-visitors').innerText = visitors;
+                animateCounter('stat-visitors', 0, visitors, 1500);
+            }
+        }
+
+        function animateCounter(elementId, start, end, duration) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.innerText = value;
+                if (progress < 1) window.requestAnimationFrame(step);
+            };
+            window.requestAnimationFrame(step);
+        }
+
+        function setSearch() {
+            const input = document.getElementById('search-input');
+            const noResults = document.getElementById('no-results');
+            if(!input) return;
+            input.addEventListener('input', (e) => {
+                const val = e.target.value.toLowerCase();
+                if (val === '') {
+                    document.querySelectorAll('.api-section').forEach(section => {
+                        section.classList.remove('hidden'); 
+                        section.querySelector('.api-section-grid')?.classList.remove('hidden');
+                        section.querySelector('.cat-arrow')?.classList.remove('rotate-180'); 
+                        section.querySelectorAll('.api-card-wrapper').forEach(c => c.classList.remove('hidden'));
+                    });
+                    if(noResults) noResults.classList.add('hidden');
+                    return;
+                }
+                let anyVisible = false;
+                document.querySelectorAll('.api-section').forEach(section => {
+                    let match = 0;
+                    section.querySelectorAll('.api-card-wrapper').forEach(card => {
+                        const txt = card.getAttribute('data-search').toLowerCase();
+                        if (txt.includes(val)) { card.classList.remove('hidden'); match++; } 
+                        else { card.classList.add('hidden'); }
+                    });
+                    if (match > 0) { section.classList.remove('hidden'); anyVisible = true; } 
+                    else { section.classList.add('hidden'); }
+                });
+                if(noResults) { noResults.classList.toggle('hidden', anyVisible); noResults.classList.toggle('flex', !anyVisible); }
+            });
+        }
+
+        function loadEnd(tags) {
+            const container = document.getElementById('api-container');
+            if(!container) return;
+            container.innerHTML = '';
+
+            for (const [cat, routes] of Object.entries(tags)) {
+                const catId = `cat-${cat.replace(/\s+/g, '-')}`;
+                const section = document.createElement('div');
+                section.className = "api-section w-full animate-brutal-pop";
+                
+                section.innerHTML = `
+                    <button id="btn-${catId}" onclick="window.toggleCategory('${catId}')" class="category-btn w-full flex items-center justify-between p-5 mb-4">
+                        <div class="flex items-center gap-4 w-full">
+                            <div class="w-12 h-12 bg-nb-yellow brutal-border flex items-center justify-center text-2xl">
+                                <i class="fa-solid fa-folder"></i>
+                            </div>
+                            <h2 class="text-xl font-black tracking-tighter uppercase text-left flex-1">${cat}</h2>
+                            <div class="flex items-center gap-3">
+                                <span class="brutal-tag px-3 py-1">${routes.length} EPS</span>
+                                <i id="arrow-${catId}" class="cat-arrow fa-solid fa-chevron-down transition-transform duration-200 text-2xl"></i>
+                            </div>
+                        </div>
+                    </button>
+                    <div id="grid-${catId}" class="api-section-grid grid grid-cols-1 gap-4 hidden mb-8 w-full"></div>
+                `;
+                
+                const grid = section.querySelector('.api-section-grid');
+                routes.forEach((route, idx) => {
+                    const id = `${cat}-${idx}`.replace(/\s+/g, '-');
+                    const methodColor = route.method === 'GET' ? 'bg-nb-blue' : route.method === 'POST' ? 'bg-nb-green' : 'bg-nb-pink';
+                    
+                    let inputs = '';
+                    let copyUrl = route.endpoint;
+                    if (route.method === 'GET' && route.params?.length) {
+                        const paramsList = route.params.map(p => `${p.name}=`).join('&');
+                        copyUrl = `${route.endpoint}?${paramsList}`;
+                    }
+
+                    if (route.params?.length) {
+                        inputs = `<div class="bg-nb-gray p-5 border-y-3 border-nb-black grid gap-4 w-full">` + 
+                        route.params.map(p => `
+                        <div>
+                            <label class="text-xs font-black uppercase tracking-wider block mb-1">${p.name} ${p.required ? '<span class="text-nb-red">*</span>' : ''}</label>
+                            <input type="text" id="input-${id}-${p.name}" placeholder="${p.description || 'VALUE...'}" 
+                                class="w-full brutal-input p-3 text-sm font-mono font-bold bg-nb-white">
+                        </div>`).join('') + `</div>`;
+                    }
+
+                    const card = document.createElement('div');
+                    card.className = 'api-card-wrapper brutal-card bg-nb-white overflow-hidden';
+                    card.setAttribute('data-search', `${route.name} ${route.endpoint} ${cat}`);
+                    
+                    card.innerHTML = `
+                        <div class="p-4 cursor-pointer border-b-3 border-nb-black hover:bg-nb-yellow transition-colors" onclick="window.toggle('${id}')">
+                            <div class="flex justify-between items-center gap-4">
+                                <div class="flex items-center gap-4 flex-wrap">
+                                    <span class="method-badge px-3 py-1 text-xs font-black ${methodColor} text-nb-black">${route.method}</span>
+                                    <code class="font-black text-sm font-mono">${route.endpoint}</code>
+                                    <span class="text-xs font-bold uppercase tracking-wide">${route.name}</span>
+                                </div>
+                                <i id="icon-${id}" class="fa-solid fa-plus text-xl transition-transform"></i>
+                            </div>
+                        </div>
+                        <div id="body-${id}" class="hidden w-full">
+                            ${inputs}
+                            <div class="p-5 flex gap-3 bg-nb-gray border-t-3 border-nb-black">
+                                <button onclick="window.testReq(this, '${route.endpoint}', '${route.method}', '${id}')" class="brutal-button flex-1 h-12 text-sm font-black tracking-wider">
+                                    <i class="fa-solid fa-bolt mr-2"></i> EXECUTE
+                                </button>
+                                <button onclick="window.copy('${copyUrl}')" class="w-12 h-12 bg-nb-white brutal-border flex items-center justify-center text-xl hover:bg-nb-black hover:text-nb-white transition-colors">
+                                    <i class="fa-regular fa-copy"></i>
+                                </button>
+                            </div>
+                            <div id="res-area-${id}" class="response-area hidden mx-5 mb-5 rounded-none overflow-hidden bg-nb-black">
+                                <div class="bg-nb-black px-4 py-2 flex items-center justify-between border-b-3 border-nb-white">
+                                    <div class="flex gap-2">
+                                        <div class="w-3 h-3 bg-nb-red brutal-border"></div>
+                                        <div class="w-3 h-3 bg-nb-yellow brutal-border"></div>
+                                        <div class="w-3 h-3 bg-nb-green brutal-border"></div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div id="status-indicator-${id}" class="status-indicator status-waiting"></div>
+                                        <span id="status-${id}" class="text-[10px] font-mono font-bold text-nb-white">IDLE</span>
+                                        <span id="time-${id}" class="text-[10px] font-mono text-nb-gray">0ms</span>
+                                    </div>
+                                    <div class="flex gap-3">
+                                         <a id="dl-btn-${id}" class="hidden text-nb-gray hover:text-nb-yellow cursor-pointer"><i class="fa-solid fa-download"></i></a>
+                                         <button onclick="window.copyRes('${id}')" class="text-nb-gray hover:text-nb-yellow"><i class="fa-regular fa-clone"></i></button>
+                                         <button onclick="window.reset('${id}')" class="text-nb-gray hover:text-nb-red"><i class="fa-solid fa-xmark"></i></button>
+                                    </div>
+                                </div>
+                                <div class="p-4 font-mono text-xs min-h-[120px] max-h-[400px] overflow-y-auto custom-scrollbar bg-nb-black break-all whitespace-pre-wrap">
+                                    <div class="flex items-center gap-2 mb-3 text-nb-gray border-b border-gray-800 pb-2">
+                                        <span class="text-nb-green font-black">❯❯</span>
+                                        <span class="text-nb-blue">curl -X ${route.method} ${route.endpoint}</span>
+                                    </div>
+                                    <div id="output-${id}" class="text-nb-gray leading-relaxed"></div>
+                                </div>
+                            </div>
+                        </div>`;
+                    grid.appendChild(card);
+                });
+                container.appendChild(section);
+            }
+        }
+
+        window.toggleCategory = (catId) => {
+            const grid = document.getElementById(`grid-${catId}`);
+            const arrow = document.getElementById(`arrow-${catId}`);
+            const btn = document.getElementById(`btn-${catId}`);
+            if(btn) { btn.classList.add('animating'); setTimeout(() => btn.classList.remove('animating'), 400); }
+            if(grid.classList.contains('hidden')) { grid.classList.remove('hidden'); grid.classList.add('animate-slide-down'); arrow?.classList.add('rotate-180'); } 
+            else { grid.classList.add('hidden'); arrow?.classList.remove('rotate-180'); }
+        };
+        
+        window.toggle = (id) => {
+            const b = document.getElementById(`body-${id}`);
+            const i = document.getElementById(`icon-${id}`);
+            if (b.classList.contains('hidden')) { b.classList.remove('hidden'); b.classList.add('animate-slide-down'); i.classList.remove('fa-plus'); i.classList.add('fa-minus'); } 
+            else { b.classList.add('hidden'); i.classList.remove('fa-minus'); i.classList.add('fa-plus'); }
+        };
+        
+        window.copy = (txt) => { navigator.clipboard.writeText(window.location.origin + txt); messeg("URL COPIED!"); };
+        window.copyRes = (id) => { const out = document.getElementById(`output-${id}`); if (out.innerText) { navigator.clipboard.writeText(out.innerText); messeg("RESPONSE COPIED!"); } };
+        window.reset = (id) => { 
+            const resArea = document.getElementById(`res-area-${id}`);
+            resArea.classList.add('hidden');
+            document.getElementById(`output-${id}`).innerHTML = ''; 
+            const statusIndicator = document.getElementById(`status-indicator-${id}`);
+            if(statusIndicator) statusIndicator.className = 'status-indicator status-waiting';
+        };
+
+        window.testReq = async (btn, url, method, id) => {
+            if (btn.disabled) return;
+            const out = document.getElementById(`output-${id}`);
+            const statusSpan = document.getElementById(`status-${id}`);
+            const timeSpan = document.getElementById(`time-${id}`);
+            const resArea = document.getElementById(`res-area-${id}`);
+            const statusIndicator = document.getElementById(`status-indicator-${id}`);
+            const originalText = btn.innerHTML;
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> PROCESSING';
+            resArea.classList.remove('hidden');
+            statusIndicator.className = 'status-indicator status-waiting';
+            statusSpan.innerText = 'RUNNING...'; 
+            out.innerHTML = '<span class="text-nb-gray italic">❯ CONNECTING...</span>';
+            
+            const params = {};
+            document.querySelectorAll(`[id^="input-${id}-"]`).forEach(i => { if(i.value) params[i.id.split(`input-${id}-`)[1]] = i.value; });
+            let fetchUrl = url + (method === 'GET' && Object.keys(params).length ? '?' + new URLSearchParams(params) : '');
+            let opts = { method, ...(method !== 'GET' ? { headers: {'Content-Type': 'application/json'}, body: JSON.stringify(params) } : {}) };
+            terminalLog(`REQ: ${method} ${fetchUrl}`, 'warn');
+            let startTime = Date.now();
+            try {
+                const req = await fetch(fetchUrl, opts);
+                const duration = Date.now() - startTime;
+                timeSpan.innerText = `${duration}ms`;
+                if (req.ok) { statusIndicator.className = 'status-indicator status-success'; statusSpan.innerText = `${req.status} OK`; statusSpan.className = 'text-nb-green font-bold'; } 
+                else { statusIndicator.className = 'status-indicator status-error'; statusSpan.innerText = `${req.status} ERROR`; statusSpan.className = 'text-nb-red font-bold'; }
+                terminalLog(`RES: [${req.status}] ${fetchUrl}`, req.ok ? 'success' : 'error');
+                const type = req.headers.get('content-type');
+                if (type?.includes('json')) { const json = await req.json(); out.innerHTML = syntaxHighlight(json); } 
+                else if (type?.startsWith('image')) {
+                    const blob = await req.blob(); const urlObj = URL.createObjectURL(blob);
+                    const dlBtn = document.getElementById(`dl-btn-${id}`);
+                    if(dlBtn) { dlBtn.href = urlObj; dlBtn.download = `brutal-${Date.now()}.jpg`; dlBtn.classList.remove('hidden'); }
+                    out.innerHTML = `<div class="flex justify-center"><img src="${urlObj}" class="max-w-full border-3 border-nb-white max-h-[280px]"></div>`;
+                } else { const text = await req.text(); out.innerHTML = `<pre class="whitespace-pre-wrap">${text}</pre>`; }
+            } catch (err) { statusIndicator.className = 'status-indicator status-error'; statusSpan.innerText = 'NETWORK ERROR'; out.innerHTML = `<span class="text-nb-red font-black">✖ ${err.message}</span>`; terminalLog(`ERR: ${err.message}`, 'error'); } 
+            finally { btn.disabled = false; btn.innerHTML = originalText; }
+        };
+
+        function syntaxHighlight(json) {
+            if (typeof json != 'string') json = JSON.stringify(json, undefined, 2);
+            return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) { if (/:$/.test(match)) cls = 'json-key'; else cls = 'json-string'; } 
+                else if (/true|false/.test(match)) cls = 'json-boolean'; else if (/null/.test(match)) cls = 'json-null';
+                return `<span class="${cls}">${match}</span>`;
+            });
+        }
+    </script>
+</body>
+</html>

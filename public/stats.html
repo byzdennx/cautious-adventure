@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KuroNeko | Brutal Monitor</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700;800&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        mono: ['"Space Mono"', 'monospace'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    },
+                    colors: {
+                        'nb-black': '#1A1A1A',
+                        'nb-white': '#FFFFFF',
+                        'nb-yellow': '#FFE600',
+                        'nb-pink': '#FF0055',
+                        'nb-blue': '#00D2FF',
+                        'nb-purple': '#9D00FF',
+                        'nb-red': '#FF3B30',
+                        'nb-green': '#00E676',
+                        'nb-gray': '#F5F5F5',
+                        'nb-darkgray': '#2A2A2A',
+                    },
+                    boxShadow: {
+                        'brutal': '8px 8px 0px 0px #1A1A1A',
+                        'brutal-sm': '4px 4px 0px 0px #1A1A1A',
+                        'brutal-hover': '12px 12px 0px 0px #1A1A1A',
+                        'brutal-pink': '8px 8px 0px 0px #FF0055',
+                        'brutal-blue': '8px 8px 0px 0px #00D2FF',
+                        'brutal-yellow': '8px 8px 0px 0px #FFE600',
+                    },
+                    animation: {
+                        'blink': 'blink 1s step-end infinite',
+                        'brutal-pop': 'brutalPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-right': 'slideRight 0.2s ease-out',
+                    },
+                    keyframes: {
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } },
+                        brutalPop: { '0%': { transform: 'scale(0.95)' }, '100%': { transform: 'scale(1)' } },
+                        slideRight: { '0%': { opacity: '0', transform: 'translateX(-10px)' }, '100%': { opacity: '1', transform: 'translateX(0)' } },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #F5F5F5;
+            background-image: repeating-linear-gradient(45deg, #E0E0E0 0px, #E0E0E0 1px, transparent 1px, transparent 24px);
+        }
+        
+        /* Neo-Brutalism Core Elements */
+        .brutal-border {
+            border: 3px solid #1A1A1A;
+        }
+        
+        .brutal-card {
+            border: 3px solid #1A1A1A;
+            background: #FFFFFF;
+            box-shadow: 8px 8px 0px 0px #1A1A1A;
+            transition: all 0.15s ease;
+        }
+        
+        .brutal-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 12px 12px 0px 0px #1A1A1A;
+        }
+        
+        /* Brutal Meter Bar */
+        .brutal-meter {
+            border: 3px solid #1A1A1A;
+            background: #F5F5F5;
+            overflow: hidden;
+        }
+        
+        .brutal-meter-fill {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #1A1A1A;
+        }
+        
+        .brutal-meter-fill.high {
+            background: #FF0055;
+        }
+        
+        .brutal-meter-fill.warning {
+            background: #FFE600;
+        }
+        
+        /* Terminal Brutal */
+        .terminal-brutal {
+            background: #1A1A1A;
+            border: 3px solid #1A1A1A;
+            box-shadow: 8px 8px 0px 0px #00D2FF;
+        }
+        
+        .terminal-brutal-header {
+            background: #1A1A1A;
+            border-bottom: 3px solid #1A1A1A;
+        }
+        
+        .brutal-tag {
+            background: #00D2FF;
+            color: #1A1A1A;
+            border: 2px solid #1A1A1A;
+            font-weight: 800;
+            font-size: 10px;
+        }
+        
+        .brutal-badge {
+            background: #FFE600;
+            border: 2px solid #1A1A1A;
+            font-weight: 800;
+        }
+        
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #F5F5F5; border-left: 2px solid #1A1A1A; }
+        ::-webkit-scrollbar-thumb { background: #1A1A1A; border: 2px solid #F5F5F5; }
+        
+        .log-line {
+            animation: slideRight 0.2s ease-out;
+            border-left: 3px solid transparent;
+            transition: all 0.1s ease;
+        }
+        
+        .log-line:hover {
+            border-left-color: #FFE600;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Brutal floating blobs */
+        .brutal-blob {
+            position: fixed;
+            border: 3px solid #1A1A1A;
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="text-nb-black min-h-screen flex flex-col font-sans selection:bg-nb-pink selection:text-white relative overflow-x-hidden">
+    
+    <!-- Brutal Background Elements -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-20 right-10 w-72 h-72 bg-nb-yellow rounded-full brutal-border brutal-blob"></div>
+        <div class="absolute bottom-20 left-10 w-96 h-96 bg-nb-pink rounded-full brutal-border brutal-blob" style="opacity: 0.06;"></div>
+        <div class="absolute top-1/3 left-1/3 w-80 h-80 bg-nb-blue rounded-full brutal-border brutal-blob" style="opacity: 0.05;"></div>
+    </div>
+
+    <!-- BRUTAL NAVIGATION -->
+    <nav class="border-b-3 border-nb-black bg-nb-white sticky top-0 z-[60] w-full shadow-brutal-sm">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center gap-4 justify-between">
+            <div class="flex items-center gap-3 shrink-0">
+                <a href="/" class="w-10 h-10 bg-nb-yellow brutal-border flex items-center justify-center hover:bg-nb-pink hover:text-white transition-colors duration-100">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </a>
+                <div class="border-l-3 border-nb-black pl-3">
+                    <h1 class="font-black text-xl tracking-tighter uppercase"><span class="text-nb-black">SYSTEM</span> <span class="text-nb-pink">STATUS</span></h1>
+                </div>
+            </div>
+            <a href="/docs" class="brutal-tag px-4 py-2 text-xs font-black uppercase tracking-wider flex items-center gap-2 hover:bg-nb-black hover:text-nb-white transition-colors">
+                <i class="fa-solid fa-book-skull"></i> DOCS
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-8 grid gap-6 relative z-10">
+        
+        <!-- STATS GRID - BRUTAL CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- UPTIME CARD -->
+            <div class="brutal-card rounded-none p-6 relative overflow-hidden bg-nb-white">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-nb-green/10 brutal-border rounded-full"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-nb-green brutal-border flex items-center justify-center text-xl text-nb-black">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[10px] font-black text-nb-black/60 uppercase tracking-wider">SYSTEM UPTIME</h3>
+                        <p id="uptime" class="font-mono font-black text-xl text-nb-black tracking-tighter">Loading...</p>
+                    </div>
+                </div>
+                <div class="brutal-meter w-full h-2">
+                    <div class="brutal-meter-fill w-full h-full bg-nb-green animate-pulse-slow"></div>
+                </div>
+            </div>
+
+            <!-- PLATFORM CARD -->
+            <div class="brutal-card rounded-none p-6 relative overflow-hidden bg-nb-white">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-nb-blue/10 brutal-border rounded-full"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-nb-blue brutal-border flex items-center justify-center text-xl text-nb-black">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[10px] font-black text-nb-black/60 uppercase tracking-wider">PLATFORM</h3>
+                        <p id="platform" class="font-mono font-black text-lg text-nb-black">Loading...</p>
+                    </div>
+                </div>
+                <div class="flex gap-2 text-[10px] font-black">
+                    <span id="arch" class="bg-nb-gray brutal-border px-2 py-1 uppercase">--</span>
+                    <span id="node-ver" class="bg-nb-gray brutal-border px-2 py-1">--</span>
+                </div>
+            </div>
+
+            <!-- CPU CARD -->
+            <div class="brutal-card rounded-none p-6 relative overflow-hidden bg-nb-white">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-nb-red/10 brutal-border rounded-full"></div>
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 bg-nb-red brutal-border flex items-center justify-center text-xl text-nb-white">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-[10px] font-black text-nb-black/60 uppercase tracking-wider">CPU LOAD</h3>
+                        <p id="cpu-load" class="font-mono font-black text-xl text-nb-black">0%</p>
+                    </div>
+                </div>
+                <p id="cpu-model" class="text-[10px] font-mono font-bold text-nb-black/70 truncate uppercase">Detecting...</p>
+            </div>
+        </div>
+
+        <!-- MEMORY USAGE - BRUTAL CARD -->
+        <div class="brutal-card rounded-none p-6 md:p-8 bg-nb-white">
+            <h2 class="text-xl font-black text-nb-black mb-6 flex items-center gap-3 uppercase tracking-tighter">
+                <i class="fa-solid fa-memory text-nb-pink"></i> MEMORY USAGE
+            </h2>
+            
+            <div class="flex justify-between text-xs font-black font-mono text-nb-black/70 mb-2">
+                <span>USED: <span id="mem-used" class="text-nb-black">0 GB</span></span>
+                <span>TOTAL: <span id="mem-total" class="text-nb-black">0 GB</span></span>
+            </div>
+            
+            <!-- Brutal Meter -->
+            <div class="brutal-meter w-full h-10 relative">
+                <div id="ram-bar" class="brutal-meter-fill h-full bg-nb-black w-0 flex items-center justify-end pr-3">
+                    <span id="ram-percent" class="text-[11px] font-black text-nb-white drop-shadow-md">0%</span>
+                </div>
+                <div class="absolute inset-0 grid grid-cols-10 pointer-events-none">
+                    <div class="border-r-2 border-nb-white/40 h-full"></div><div class="border-r-2 border-nb-white/40 h-full"></div>
+                    <div class="border-r-2 border-nb-white/40 h-full"></div><div class="border-r-2 border-nb-white/40 h-full"></div>
+                    <div class="border-r-2 border-nb-white/40 h-full"></div><div class="border-r-2 border-nb-white/40 h-full"></div>
+                    <div class="border-r-2 border-nb-white/40 h-full"></div><div class="border-r-2 border-nb-white/40 h-full"></div>
+                    <div class="border-r-2 border-nb-white/40 h-full"></div>
+                </div>
+            </div>
+            
+            <p class="text-right text-[10px] font-black text-nb-pink mt-2 uppercase tracking-wider">
+                FREE: <span id="mem-free" class="text-nb-black">0 GB</span>
+            </p>
+        </div>
+
+        <!-- REALTIME LOGS - BRUTAL TERMINAL -->
+        <div class="terminal-brutal rounded-none overflow-hidden flex flex-col h-[320px] font-mono text-xs relative">
+            <div class="terminal-brutal-header px-4 py-3 flex items-center justify-between border-b-3 border-nb-white">
+                <div class="flex gap-2">
+                    <div class="w-3 h-3 bg-nb-red brutal-border"></div>
+                    <div class="w-3 h-3 bg-nb-yellow brutal-border"></div>
+                    <div class="w-3 h-3 bg-nb-green brutal-border"></div>
+                    <span class="ml-2 text-nb-white font-black text-[10px] uppercase tracking-wider">❯ PUBLIC REQUESTS</span>
+                </div>
+                <div class="flex gap-2">
+                    <div class="w-2 h-2 bg-nb-green animate-blink brutal-border"></div>
+                    <span class="text-[8px] text-nb-white/60 font-mono">LIVE</span>
+                </div>
+            </div>
+            <div id="realtime-logs" class="p-4 text-nb-gray overflow-y-auto flex-1 space-y-1 font-mono text-xs leading-relaxed bg-nb-black">
+                <div class="text-nb-gray/40 italic font-bold">❯ Listening for requests...</div>
+            </div>
+            <div class="bg-nb-black border-t-3 border-nb-white px-4 py-2 flex items-center gap-2">
+                <span class="text-nb-green font-black">❯❯</span>
+                <span class="text-nb-white text-[10px] font-mono">tail -f /var/log/brutal/access.log</span>
+                <span class="inline-block w-2 h-2 bg-nb-yellow animate-blink ml-2"></span>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const updateInterval = 1000;
+        let lastRequestsJson = '';
+
+        async function fetchStats() {
+            try {
+                const response = await fetch('/stats/data');
+                const data = await response.json();
+                
+                if(data.status) {
+                    const s = data.server;
+                    document.getElementById('uptime').innerText = s.uptime;
+                    document.getElementById('platform').innerText = s.hostname;
+                    document.getElementById('arch').innerText = s.arch;
+                    document.getElementById('node-ver').innerText = s.node_version;
+                    document.getElementById('cpu-model').innerHTML = `${s.cpu.model} <span class="text-nb-pink">(${s.cpu.cores} Cores)</span>`;
+                    
+                    const cpuLoad = (parseFloat(s.cpu.load) * 10).toFixed(1);
+                    const cpuEl = document.getElementById('cpu-load');
+                    cpuEl.innerText = `${cpuLoad}%`;
+                    if(parseFloat(cpuLoad) > 70) cpuEl.className = 'font-mono font-black text-xl text-nb-red';
+                    else if(parseFloat(cpuLoad) > 50) cpuEl.className = 'font-mono font-black text-xl text-nb-yellow';
+                    else cpuEl.className = 'font-mono font-black text-xl text-nb-black';
+                    
+                    document.getElementById('mem-used').innerText = s.memory.used;
+                    document.getElementById('mem-total').innerText = s.memory.total;
+                    document.getElementById('mem-free').innerText = s.memory.free;
+                    
+                    const ramBar = document.getElementById('ram-bar');
+                    const ramPct = document.getElementById('ram-percent');
+                    const percent = parseFloat(s.memory.percent);
+                    ramBar.style.width = `${percent}%`;
+                    ramPct.innerText = `${Math.round(percent)}%`;
+                    
+                    // Brutal color coding for memory
+                    if(percent > 90) {
+                        ramBar.className = 'brutal-meter-fill h-full high flex items-center justify-end pr-3';
+                        ramPct.className = 'text-[11px] font-black text-nb-white drop-shadow-md';
+                    } else if(percent > 70) {
+                        ramBar.className = 'brutal-meter-fill h-full warning flex items-center justify-end pr-3';
+                        ramPct.className = 'text-[11px] font-black text-nb-black drop-shadow-md';
+                    } else {
+                        ramBar.className = 'brutal-meter-fill h-full bg-nb-black flex items-center justify-end pr-3';
+                        ramPct.className = 'text-[11px] font-black text-nb-white drop-shadow-md';
+                    }
+                    
+                    const newRequestsJson = JSON.stringify(data.requests);
+                    if (data.requests && newRequestsJson !== lastRequestsJson) {
+                        lastRequestsJson = newRequestsJson;
+                        renderLogs(data.requests);
+                    }
+                }
+            } catch (e) { 
+                console.error("Stats fetch error", e);
+                const logsDiv = document.getElementById('realtime-logs');
+                if(logsDiv && !logsDiv.querySelector('.error-msg')) {
+                    const errDiv = document.createElement('div');
+                    errDiv.className = 'text-nb-red font-bold';
+                    errDiv.innerHTML = '<span class="text-nb-red">✖</span> Connection to stats server lost. Retrying...';
+                    logsDiv.appendChild(errDiv);
+                }
+            }
+        }
+
+        function renderLogs(logs) {
+            const container = document.getElementById('realtime-logs');
+            if (!container) return;
+            
+            container.innerHTML = ''; 
+
+            if (!logs || logs.length === 0) {
+                container.innerHTML = '<div class="text-nb-gray/40 italic font-bold">❯ Listening for requests...</div>';
+                return;
+            }
+
+            logs.slice().reverse().forEach(log => {
+                const div = document.createElement('div');
+                div.className = "log-line break-all px-2 py-1 rounded-none flex gap-2 font-mono text-[11px] border-b border-nb-white/5";
+                
+                const match = log.match(/^\[([A-Z]+)\] \[(\d+)\] (.*)$/);
+                
+                if (match) {
+                    const method = match[1];
+                    const status = match[2];
+                    const url = match[3];
+                    
+                    let methodColor = 'text-nb-blue';
+                    let methodBg = '';
+                    if(method === 'POST') methodColor = 'text-nb-green';
+                    if(method === 'DELETE') methodColor = 'text-nb-red';
+                    if(method === 'PUT') methodColor = 'text-nb-yellow';
+                    
+                    let statusColor = 'text-nb-green';
+                    let statusBg = '';
+                    if(status.startsWith('4')) { statusColor = 'text-nb-yellow'; statusBg = 'bg-nb-yellow/10'; }
+                    if(status.startsWith('5')) { statusColor = 'text-nb-red'; statusBg = 'bg-nb-red/10'; }
+
+                    div.innerHTML = `
+                        <span class="font-black ${methodColor} w-14 shrink-0 uppercase tracking-wide">[${method}]</span>
+                        <span class="font-black ${statusColor} w-12 shrink-0 ${statusBg} px-1 text-center">${status}</span>
+                        <span class="text-nb-gray/80 truncate font-mono">${url}</span>
+                        <span class="text-nb-gray/30 ml-auto text-[9px] font-mono">${new Date().toLocaleTimeString()}</span>
+                    `;
+                } else {
+                    div.innerHTML = `<span class="text-nb-pink">➜</span> <span class="text-nb-gray">${log}</span>`;
+                }
+                
+                container.appendChild(div);
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Initial fetch and interval
+        fetchStats();
+        setInterval(fetchStats, updateInterval);
+    </script>
+</body>
+</html>
